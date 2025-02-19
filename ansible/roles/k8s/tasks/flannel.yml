@@ -1,0 +1,35 @@
+---
+- name: Reset existing Flannel configuration
+  shell: |
+    kubectl delete -f /tmp/kube-flannel.yml || true
+    rm -rf /run/flannel
+    rm -f /etc/cni/net.d/*
+  ignore_errors: true
+  when: hostvars[inventory_hostname].is_master
+
+- name: Create kube-flannel namespace
+  command: kubectl create ns kube-flannel
+  ignore_errors: true
+
+- name: Label kube-flannel namespace for Pod Security
+  command: kubectl label ns kube-flannel pod-security.kubernetes.io/enforce=privileged
+
+- name: Deploy modified Flannel CNI
+  template:
+    src: kube-flannel.yml.j2
+    dest: /tmp/kube-flannel.yml
+  when: hostvars[inventory_hostname].is_master
+
+- name: Apply Flannel CNI
+  command: kubectl apply -f /tmp/kube-flannel.yml
+  when: hostvars[inventory_hostname].is_master
+
+- name: Wait for Flannel DaemonSet to be ready
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: DaemonSet
+    name: kube-flannel-ds
+    namespace: kube-flannel
+    wait: yes
+    wait_timeout: 300
+  when: hostvars[inventory_hostname].is_master

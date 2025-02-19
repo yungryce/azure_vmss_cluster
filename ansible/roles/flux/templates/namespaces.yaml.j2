@@ -1,0 +1,11 @@
+---
+{% for env in environments %}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ env.name }}
+  labels:
+    name: {{ env.name }}
+    env: {{ env.labels.env }}
+---
+{% endfor %}

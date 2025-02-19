@@ -1,0 +1,100 @@
+private/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+*.tfvars
+.terraform/
+.terraform.lock.hcl
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# Ansible
+*.retry
+ansible/*.log
+ansible/collections/*
+ansible/roles/*/files/*.retry
+.ansible/
+.ansible_cache/
+*.cfg
+
+# Kubernetes
+kubeconfig*
+*.kubeconfig
+.kube/
+kubectl-edit-*.yaml
+
+# Flux
+.flux.yaml
+**/charts/*.tgz
+flux-system/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Azure
+.azure/
+azure.*.json
+*.publishsettings
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+logs/
+*.log.*
+
+# Environment variables and secrets
+.env
+.env.*
+*.pem
+*.key
+*.pub
+secrets/
+credentials/
+.secrets/
+.credentials/
+
+# Binary files
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Build and temp directories
+build/
+dist/
+tmp/
+temp/
+.cache/
+
+# Package dependencies
+node_modules/
+vendor/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so

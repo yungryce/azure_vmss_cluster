@@ -1,0 +1,51 @@
+{
+  "key_vault_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "vmss-ubuntu-vault"
+  },
+  "key_vault_secret_names": {
+    "sensitive": false,
+    "type": [
+      "tuple",
+      [
+        "string",
+        "string"
+      ]
+    ],
+    "value": [
+      "ssh-public-key",
+      "ssh-private-key"
+    ]
+  },
+  "load_balancer_ip": {
+    "sensitive": false,
+    "type": "string",
+    "value": "4.246.89.241"
+  },
+  "resource_group_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "/subscriptions/105a58e6-5ddb-4fca-a952-fc0f81314fdc/resourceGroups/rg-guided-firefly"
+  },
+  "resource_group_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "rg-guided-firefly"
+  },
+  "subnet_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "sub-sharing-oriole"
+  },
+  "virtual_network_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "vnet-chief-joey"
+  },
+  "vmss_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "vmss-special-goose"
+  }
+}

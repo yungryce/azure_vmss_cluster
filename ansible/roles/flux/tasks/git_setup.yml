@@ -1,0 +1,87 @@
+---
+- name: Validate GitHub token
+  block:
+    - name: Include vaulted secrets
+      include_vars:
+        file: roles/flux/vars/secrets.yml
+        name: secrets
+      no_log: true
+
+    - name: Ensure GitHub token is valid
+      uri:
+        url: "https://api.github.com/repos/yungryce/azure_vmss_cluster"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ github_token }}"
+        status_code: 200
+      register: token_check
+      no_log: true
+
+- name: Check if deploy key already exists
+  uri:
+    url: "https://api.github.com/repos/yungryce/azure_vmss_cluster/keys"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ github_token }}"
+      Accept: "application/vnd.github.v3+json"
+    status_code: 200
+  register: existing_keys
+
+- name: Add deploy key if not exists
+  uri:
+    url: "https://api.github.com/repos/yungryce/azure_vmss_cluster/keys"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ github_token }}"
+      Accept: "application/vnd.github.v3+json"
+    body_format: json
+    body:
+      title: "flux-deploy-{{ ansible_date_time.date }}"
+      key: "{{ lookup('file', '/home/azureuser/.ssh/flux-deploy-key.pub') | trim }}"
+      read_only: false
+    status_code: 201
+  when: 
+    - token_check.status == 200
+    - hostvars[inventory_hostname].is_master
+    - >
+        lookup('file', '/home/azureuser/.ssh/flux-deploy-key.pub') | regex_replace(' .*', '') | trim
+        not in existing_keys.json | map(attribute='key') | map('regex_replace', ' .*', '') | list
+
+- name: Configure SSH for GitHub
+  blockinfile:
+    path: /root/.ssh/config
+    block: |
+      Host github.com
+        IdentityFile /root/.ssh/flux-deploy-key
+        User git
+        IdentitiesOnly yes
+    create: yes
+    mode: '0600'
+  when: hostvars[inventory_hostname].is_master
+
+- name: Test Git write access via Ansible
+  shell: |
+    export GIT_SSH_COMMAND="ssh -i /root/.ssh/flux-deploy-key -o StrictHostKeyChecking=no"
+    git clone ssh://git@github.com/yungryce/azure_vmss_cluster.git /tmp/flux-test
+    cd /tmp/flux-test
+    touch test-file
+    git -c user.email="yungryce@yahoo.com" -c user.name="yungryce" commit -am "Test write access"
+    git push origin main
+    rm -rf /tmp/flux-test
+  args:
+    executable: /bin/bash
+  environment:
+    GIT_SSH_COMMAND: "ssh -i /root/.ssh/flux-deploy-key -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
+  changed_when: false
+  ignore_errors: true
+  register: git_test
+  when: hostvars[inventory_hostname].is_master
+
+- name: Debug Git write test
+  debug:
+    msg: "Git write access verified successfully"
+  when:
+    - hostvars[inventory_hostname].is_master
+    - git_test.rc == 0
+  tags:
+    - debug

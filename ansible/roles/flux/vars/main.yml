@@ -1,0 +1,23 @@
+git_repository: "https://github.com/yungryce/azure_vmss_cluster.git"
+git_branch: "main"
+manifests_path: "./gitops/clusters/development"
+
+environments:
+  - name: development
+    namespace: development
+    labels:
+      env: dev
+  - name: staging
+    namespace: staging
+    labels:
+      env: staging
+  - name: production
+    namespace: production
+    labels:
+      env: prod
+
+base_resources:
+  - monitoring
+  - networking
+  - security
+  - nginx-svc

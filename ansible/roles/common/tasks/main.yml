@@ -1,0 +1,57 @@
+---
+- name: Update apt cache and upgrade all packages
+  apt:
+    update_cache: yes
+    upgrade: dist
+    autoremove: yes
+    cache_valid_time: 3600
+
+- name: Install necessary system packages
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+    state: present
+
+- name: Install pip3
+  package:
+    name: python3-pip
+    state: present
+
+- name: Ensure /etc/apt/keyrings exists
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Ensure azureadmin has passwordless sudo
+  become: true
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^azureadmin ALL=\(ALL\) NOPASSWD:ALL'
+    line: 'azureadmin ALL=(ALL) NOPASSWD:ALL'
+    validate: 'visudo -cf %s'
+
+- name: Ensure .ssh directory exists on master
+  file:
+    path: /root/.ssh
+    state: directory
+    mode: '0700'
+  when: hostvars[inventory_hostname].is_master
+
+- name: Copy new private key to master
+  copy:
+    src: /home/azureuser/.ssh/flux-deploy-key
+    dest: /root/.ssh/flux-deploy-key
+    mode: '0400'
+  when: hostvars[inventory_hostname].is_master
+
+- name: Copy new public key to master
+  copy:
+    src: /home/azureuser/.ssh/flux-deploy-key.pub
+    dest: /root/.ssh/flux-deploy-key.pub
+    mode: '0644'
+  when: hostvars[inventory_hostname].is_master

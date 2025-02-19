@@ -1,0 +1,14 @@
+---
+- name: Install packages and set up Kubernetes cluster
+  hosts: vmss
+  become: true
+  vars_files:
+    - roles/flux/vars/secrets.yml
+  roles:
+    - common
+    - containerd
+    - k8s
+    - flux
+    # - manifests
+    # - nginx
+    # - docker

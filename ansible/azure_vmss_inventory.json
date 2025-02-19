@@ -1,0 +1,24 @@
+{
+  "all": {
+    "children": {
+      "vmss": {
+        "hosts": {
+          "10.0.1.4": {
+            "is_master": true,
+            "is_worker": false,
+            "node_name": "vmss-special-goose-0"
+          },
+          "10.0.1.7": {
+            "is_master": false,
+            "is_worker": true,
+            "node_name": "vmss-special-goose-3"
+          }
+        },
+        "vars": {
+          "ansible_user": "azureadmin",
+          "ansible_ssh_private_key_file": "ssh_private_key.pem"
+        }
+      }
+    }
+  }
+}

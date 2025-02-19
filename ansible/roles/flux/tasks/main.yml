@@ -1,0 +1,144 @@
+---
+- name: Include Git setup tasks
+  include_tasks: git_setup.yml
+
+- name: Install flux binary
+  include_tasks: install_flux.yml
+
+- name: Setup Flux prerequisites
+  when: hostvars[inventory_hostname].is_master
+  block:
+    - name: Create flux-system namespace
+      kubernetes.core.k8s:
+        name: flux-system
+        api_version: v1
+        kind: Namespace
+        state: present
+
+    - name: Wait for flux-system namespace to be ready
+      kubernetes.core.k8s_info:
+        kind: Namespace
+        api_version: v1
+        name: flux-system
+        wait: yes
+        wait_timeout: 300
+  
+    - name: Remove existing flux_bootstrapped marker
+      file:
+        path: /etc/flux_bootstrapped
+        state: absent
+
+- name: Setup GitOps directory structure
+  delegate_to: localhost
+  run_once: true
+  block:
+    - name: Create base directories (apps, infrastructure)
+      file:
+        path: "{{ playbook_dir }}/../gitops/{{ item }}/base"
+        state: directory
+        mode: '0755'
+      with_items:
+        - "infrastructure"
+        - "apps"
+
+    - name: Generate base kustomization files
+      template:
+        src: base-kustomization.yaml.j2
+        dest: "{{ playbook_dir }}/../gitops/{{ item }}/base/kustomization.yaml"
+        mode: '0644'
+      with_items:
+        - "infrastructure"
+        - "apps"
+
+    - name: Create environment directories
+      file:
+        path: "{{ playbook_dir }}/../gitops/clusters/{{ item.name }}/flux-system"
+        state: directory
+        mode: '0755'
+      with_items: "{{ environments }}"
+
+    - name: Create infrastructure overlay directories
+      file:
+        path: "{{ playbook_dir }}/../gitops/infrastructure/overlays/{{ item.name }}"
+        state: directory
+      loop: "{{ environments }}"
+      loop_control:
+        label: "infrastructure"
+
+    - name: Create apps overlay directories
+      file:
+        path: "{{ playbook_dir }}/../gitops/apps/overlays/{{ item.name }}"
+        state: directory
+      loop: "{{ environments }}"
+      loop_control:
+        label: "apps"
+
+    - name: Generate environment overlay kustomizations
+      template:
+        src: env-kustomization.yaml.j2
+        dest: "{{ playbook_dir }}/../gitops/{{ list_name }}/overlays/{{ environment.name }}/kustomization.yaml"
+        mode: '0644'
+      loop: "{{ environments }}"
+      loop_control:
+        loop_var: environment
+      vars:
+        list_name: "infrastructure"  # or "apps" in a separate task
+
+    - name: Generate infrastructure manifests
+      template:
+        src: "{{ item.template }}"
+        dest: "{{ playbook_dir }}/../gitops/infrastructure/base/{{ item.name }}"
+        mode: '0644'
+      with_items:
+        - { template: 'namespaces.yaml.j2', name: 'namespaces.yaml' }
+        - { template: 'cluster-kustomization.yaml.j2', name: 'cluster-kustomization.yaml' }
+
+    - name: Generate app manifests
+      template:
+        src: "nginx-svc.yml.j2"
+        dest: "{{ playbook_dir }}/../gitops/apps/base/nginx-svc.yml"
+      loop: "{{ environments }}"
+      loop_control:
+        loop_var: environment
+
+- name: Bootstrap Flux
+  when: hostvars[inventory_hostname].is_master
+  block:
+        
+    - name: Bootstrap Flux with Git repository
+      shell: |
+        flux install --components-extra=image-reflector-controller,image-automation-controller
+        printf 'y\n' | flux bootstrap git \
+          --url=ssh://git@github.com/yungryce/azure_vmss_cluster.git \
+          --branch=main \
+          --path=./gitops/clusters/development \
+          --ssh-key-algorithm=ed25519 \
+          --private-key-file=/root/.ssh/flux-deploy-key \
+          --network-policy=false \
+          --components-extra=image-reflector-controller,image-automation-controller \
+          --timeout=10m \
+          --verbose
+      args:
+        executable: /bin/bash
+        creates: /etc/flux_bootstrapped
+      environment:
+        KUBECONFIG: /root/.kube/config
+        GIT_SSH_COMMAND: "ssh -i /root/.ssh/flux-deploy-key -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
+      register: flux_bootstrap
+      failed_when:
+        - flux_bootstrap.rc != 0
+        - "'already exists' not in flux_bootstrap.stderr"
+
+    - name: Mark Flux as bootstrapped
+      file:
+        path: /etc/flux_bootstrapped
+        state: touch
+      when: flux_bootstrap.rc == 0 or 'already exists' in flux_bootstrap.stderr|default('')
+
+    - name: Verify Flux deployment
+      command: flux check
+      register: flux_check
+      retries: 30
+      delay: 10
+      until: flux_check.rc == 0
+      when: not flux_bootstrap.failed | default(false)
