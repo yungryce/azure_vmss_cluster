@@ -1,11 +1,3 @@
-### Question:
-as my project has seen major improvements, let update our readme t capture these changes
-
-### Answer:
-Certainly! I'll help you update the README to reflect the major improvements in your project. Based on the code you've shared and the context provided, I'll draft an updated README that captures the changes and provides a more comprehensive overview of your project. Here's a suggested update:
-
-**File: /home/azureuser/README.md**
-```markdown
 # Azure VMSS Cluster with Terraform, Ansible, and Flux
 
 ## Project Overview
