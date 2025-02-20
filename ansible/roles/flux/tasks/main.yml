@@ -52,7 +52,7 @@
 
     - name: Create environment directories
       file:
-        path: "{{ playbook_dir }}/../gitops/clusters/{{ item.name }}/flux-system"
+        path: "{{ playbook_dir }}/../gitops/clusters/{{ item.name }}"
         state: directory
         mode: '0755'
       with_items: "{{ environments }}"
@@ -76,11 +76,11 @@
     - name: Generate environment overlay kustomizations
       template:
         src: env-kustomization.yaml.j2
-        dest: "{{ playbook_dir }}/../gitops/{{ list_name }}/overlays/{{ environment.name }}/kustomization.yaml"
+        dest: "{{ playbook_dir }}/../gitops/{{ list_name }}/overlays/{{ env.name }}/kustomization.yaml"
         mode: '0644'
       loop: "{{ environments }}"
       loop_control:
-        loop_var: environment
+        loop_var: env
       vars:
         list_name: "infrastructure"  # or "apps" in a separate task
 
@@ -99,7 +99,7 @@
         dest: "{{ playbook_dir }}/../gitops/apps/base/nginx-svc.yml"
       loop: "{{ environments }}"
       loop_control:
-        loop_var: environment
+        loop_var: env
 
 - name: Bootstrap Flux
   when: hostvars[inventory_hostname].is_master

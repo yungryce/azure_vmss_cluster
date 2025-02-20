@@ -1,5 +1,5 @@
 private/
-*/secrets.yml
+ansible/roles/flux/vars/secrets.yml
 
 # Terraform
 *.tfstate

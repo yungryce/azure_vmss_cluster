@@ -6,10 +6,10 @@ resources:
   - ../../base
   - namespace.yaml
 
-namespace: {{ environment.namespace }}
+namespace: {{ env.namespace }}
 
 commonLabels:
-  env: {{ environment.labels.env }}
+  env: {{ env.labels.env }}
   app.kubernetes.io/managed-by: flux
 
 patches:
@@ -19,4 +19,4 @@ patches:
     patch: |-
       - op: replace
         path: /metadata/namespace
-        value: {{ environment.namespace }}
+        value: {{ env.namespace }}
