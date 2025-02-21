@@ -1,0 +1,55 @@
+# flux/tasks/main.yml
+- name: Setup GitOps directory structure
+  delegate_to: localhost
+  run_once: true
+  block:
+    - name: Create base directories
+      file:
+        path: "{{ gitops_base_path }}/{{ item }}/base"
+        state: directory
+        owner: "{{ git_owner }}"
+        group: "{{ git_group }}"
+        mode: "{{ dir_mode }}"
+      loop:
+        - "infrastructure"
+        - "apps"
+        - "clusters"
+
+    - name: Generate base kustomization files
+      template:
+        src: base-kustomization.yaml.j2
+        dest: "{{ gitops_base_path }}/{{ item }}/base/kustomization.yaml"
+        owner: "{{ git_owner }}"
+        group: "{{ git_group }}"
+        mode: "{{ file_mode }}"
+      loop:
+        - "infrastructure"
+        - "apps"
+
+    - name: Create cluster directories
+      file:
+        path: "{{ gitops_base_path }}/clusters/{{ item.name }}/flux-system"
+        state: directory
+        owner: "{{ git_owner }}"
+        group: "{{ git_group }}"
+        mode: "{{ dir_mode }}"
+      loop: "{{ environments }}"
+
+    - name: Generate infrastructure manifests
+      template:
+        src: "{{ item.template }}"
+        dest: "{{ gitops_base_path }}/infrastructure/base/{{ item.name }}"
+        owner: "{{ git_owner }}"
+        group: "{{ git_group }}"
+        mode: "{{ file_mode }}"
+      loop:
+        - { template: 'namespaces.yaml.j2', name: 'namespaces.yaml' }
+        - { template: 'cluster-kustomization.yaml.j2', name: 'cluster-kustomization.yaml' }
+
+    - name: Generate app manifests
+      template:
+        src: "nginx-svc.yml.j2"
+        dest: "{{ gitops_base_path }}/apps/base/nginx-svc.yml"
+        owner: "{{ git_owner }}"
+        group: "{{ git_group }}"
+        mode: "{{ file_mode }}"

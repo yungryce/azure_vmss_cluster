@@ -3,9 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nginx-service
-  namespace: {{ env.namespace | default('default') }}  # Dynamic namespace
-  labels:
-    env: {{ env.labels.env }}
+  namespace: default  # Static value or use {{ namespace }} if needed
 spec:
   selector:
     app: nginx
@@ -13,3 +11,4 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
+

@@ -1,7 +1,16 @@
+# Git Repository Information
 git_repository: "https://github.com/yungryce/azure_vmss_cluster.git"
 git_branch: "main"
 manifests_path: "./gitops/clusters/development"
 
+# GitOps Base Path and Permissions
+gitops_base_path: "{{ playbook_dir }}/../gitops"
+git_owner: "azureuser"
+git_group: "azureuser"
+dir_mode: "0755"
+file_mode: "0644"
+
+# Environments
 environments:
   - name: development
     namespace: development
@@ -16,8 +25,9 @@ environments:
     labels:
       env: prod
 
+# Base Infrastructure and Application Resources
 base_resources:
   - monitoring
   - networking
   - security
-  - nginx-svc
+  # - nginx-svc
