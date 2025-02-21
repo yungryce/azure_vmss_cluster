@@ -60,6 +60,7 @@ Thumbs.db
 .azure/
 azure.*.json
 *.publishsettings
+local.settings.json
 
 # Logs and databases
 *.log
