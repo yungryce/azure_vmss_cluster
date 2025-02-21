@@ -33,7 +33,7 @@ kubectl-edit-*.yaml
 # Flux
 .flux.yaml
 **/charts/*.tgz
-flux-system/
+# flux-system/
 
 # IDEs and editors
 .vscode/
