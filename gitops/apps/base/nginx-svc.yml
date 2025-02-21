@@ -1,11 +1,9 @@
-# roles/flux/templates/nginx-svc.yml.j2
+---
 apiVersion: v1
 kind: Service
 metadata:
   name: nginx-service
-  namespace: production  # Dynamic namespace
-  labels:
-    env: prod
+  namespace: default  # Static value or use <class 'jinja2.utils.Namespace'> if needed
 spec:
   selector:
     app: nginx
@@ -13,3 +11,4 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
+

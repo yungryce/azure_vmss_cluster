@@ -7,7 +7,3 @@ resources:
   - monitoring.yaml
   - networking.yaml
   - security.yaml
-  - nginx-svc.yaml
-
-commonLabels:
-  app.kubernetes.io/managed-by: flux
