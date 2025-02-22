@@ -54,3 +54,19 @@
         owner: "{{ git_owner }}"
         group: "{{ git_group }}"
         mode: "{{ file_mode }}"
+
+    - name: Generate Nginx deployment manifest
+      template:
+        src: "nginx-deployment.yaml.j2"
+        dest: "{{ gitops_base_path }}/apps/base/nginx-deployment.yaml"
+        owner: "{{ git_owner }}"
+        group: "{{ git_group }}"
+        mode: "{{ file_mode }}"
+
+    - name: Kustomization for Nginx resources
+      template:
+        src: "nginx-kustomization.yaml.j2"
+        dest: "{{ gitops_base_path }}/apps/base/kustomization.yaml"
+        owner: "{{ git_owner }}"
+        group: "{{ git_group }}"
+        mode: "{{ file_mode }}"
