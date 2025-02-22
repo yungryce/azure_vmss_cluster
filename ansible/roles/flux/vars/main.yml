@@ -1,7 +1,8 @@
 # Git Repository Information
 git_repository: "https://github.com/yungryce/azure_vmss_cluster.git"
 git_branch: "main"
-manifests_path: "./gitops/clusters/development"
+# manifests_path: "./gitops/clusters/development"
+manifests_path: "./gitops/infrastructure/base"
 
 # GitOps Base Path and Permissions
 gitops_base_path: "{{ playbook_dir }}/../gitops"
