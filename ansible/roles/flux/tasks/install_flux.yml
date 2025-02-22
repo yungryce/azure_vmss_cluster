@@ -1,6 +1,36 @@
 ---
+- name: Clean up old Flux installation
+  block:
+    - name: Check if flux-system namespace exists
+      kubernetes.core.k8s_info:
+        kind: Namespace
+        name: flux-system
+      register: flux_ns
+      ignore_errors: true
+
+    - name: Remove flux-system namespace if it exists
+      kubernetes.core.k8s:
+        state: absent
+        kind: Namespace
+        name: flux-system
+      when: flux_ns.resources is defined and flux_ns.resources | length > 0
+
+    - name: Remove old Flux installation marker
+      file:
+        path: /etc/flux_bootstrapped
+        state: absent
+
+    - name: Wait for namespace termination
+      kubernetes.core.k8s_info:
+        kind: Namespace
+        name: flux-system
+      register: flux_ns_check
+      until: flux_ns_check.resources | length == 0
+      retries: 30
+      delay: 10
+      when: flux_ns.resources is defined and flux_ns.resources | length > 0
+
 - name: Install Flux CLI
-  when: hostvars[inventory_hostname].is_master
   block:
     - name: Get latest Flux version
       uri:
@@ -52,3 +82,20 @@
       command: flux --version
       register: flux_version_check
       changed_when: false
+
+- name: Setup Flux prerequisites
+  block:
+    - name: Create flux-system namespace
+      kubernetes.core.k8s:
+        name: flux-system
+        api_version: v1
+        kind: Namespace
+        state: present
+
+    - name: Wait for flux-system namespace to be ready
+      kubernetes.core.k8s_info:
+        kind: Namespace
+        api_version: v1
+        name: flux-system
+        wait: yes
+        wait_timeout: 300

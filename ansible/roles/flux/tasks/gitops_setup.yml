@@ -1,4 +1,4 @@
-# flux/tasks/main.yml
+---
 - name: Setup GitOps directory structure
   delegate_to: localhost
   run_once: true
@@ -28,12 +28,13 @@
 
     - name: Create cluster directories
       file:
-        path: "{{ gitops_base_path }}/clusters/{{ item.name }}/flux-system"
+        # path: "{{ gitops_base_path }}/clusters/{{ item.name }}/flux-system"
+        path: "{{ gitops_base_path }}/clusters/development/flux-system"
         state: directory
         owner: "{{ git_owner }}"
         group: "{{ git_group }}"
         mode: "{{ dir_mode }}"
-      loop: "{{ environments }}"
+      # loop: "{{ environments }}"
 
     - name: Generate infrastructure manifests
       template:

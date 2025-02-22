@@ -4,29 +4,7 @@
 
 - name: Install flux binary
   include_tasks: install_flux.yml
-
-- name: Setup Flux prerequisites
   when: hostvars[inventory_hostname].is_master
-  block:
-    - name: Create flux-system namespace
-      kubernetes.core.k8s:
-        name: flux-system
-        api_version: v1
-        kind: Namespace
-        state: present
-
-    - name: Wait for flux-system namespace to be ready
-      kubernetes.core.k8s_info:
-        kind: Namespace
-        api_version: v1
-        name: flux-system
-        wait: yes
-        wait_timeout: 300
-  
-    - name: Remove existing flux_bootstrapped marker
-      file:
-        path: /etc/flux_bootstrapped
-        state: absent
 
 - name: Setup GitOps directory structure
   include_tasks: gitops_setup.yml
@@ -37,15 +15,17 @@
         
     - name: Bootstrap Flux with Git repository
       shell: |
-        flux install --components-extra=image-reflector-controller,image-automation-controller
+        flux install \
+          --components-extra=image-reflector-controller,image-automation-controller \
+          --network-policy=false
         printf 'y\n' | flux bootstrap git \
           --url=ssh://git@github.com/yungryce/azure_vmss_cluster.git \
           --branch=main \
           --path=./gitops/clusters/development \
+          --components=source-controller,kustomize-controller \
           --ssh-key-algorithm=ed25519 \
           --private-key-file=/root/.ssh/flux-deploy-key \
           --network-policy=false \
-          --components-extra=image-reflector-controller,image-automation-controller \
           --timeout=10m \
           --verbose
       args:
