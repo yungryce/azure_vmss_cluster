@@ -4,6 +4,6 @@ kind: Kustomization
 
 resources:
   - namespaces.yaml
-{% for resource in base_resources if resource != 'nginx-svc' %}
+  {% for resource in base_resources %}
   - {{ resource }}.yaml
-{% endfor %}
+  {% endfor %}

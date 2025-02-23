@@ -21,31 +21,31 @@
   "load_balancer_ip": {
     "sensitive": false,
     "type": "string",
-    "value": "4.246.89.241"
+    "value": "52.229.24.150"
   },
   "resource_group_id": {
     "sensitive": false,
     "type": "string",
-    "value": "/subscriptions/105a58e6-5ddb-4fca-a952-fc0f81314fdc/resourceGroups/rg-guided-firefly"
+    "value": "/subscriptions/105a58e6-5ddb-4fca-a952-fc0f81314fdc/resourceGroups/rg-valued-ibex"
   },
   "resource_group_name": {
     "sensitive": false,
     "type": "string",
-    "value": "rg-guided-firefly"
+    "value": "rg-valued-ibex"
   },
   "subnet_name": {
     "sensitive": false,
     "type": "string",
-    "value": "sub-sharing-oriole"
+    "value": "sub-glowing-monkfish"
   },
   "virtual_network_name": {
     "sensitive": false,
     "type": "string",
-    "value": "vnet-chief-joey"
+    "value": "vnet-fun-newt"
   },
   "vmss_name": {
     "sensitive": false,
     "type": "string",
-    "value": "vmss-special-goose"
+    "value": "vmss-trusty-killdeer"
   }
 }

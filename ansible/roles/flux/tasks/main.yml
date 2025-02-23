@@ -9,8 +9,15 @@
 - name: Setup GitOps directory structure
   include_tasks: gitops_setup.yml
 
+- name: Check connectivity to Kubernetes API server
+  command: curl -k https://10.0.1.5:6443/healthz
+  register: api_server_health
+  retries: 5
+  delay: 10
+  until: api_server_health.rc == 0
+
 - name: Bootstrap Flux
-  when: hostvars[inventory_hostname].is_master
+  when: hostvars[inventory_hostname].is_master and api_server_health.rc == 0
   block:
         
     - name: Bootstrap Flux with Git repository
