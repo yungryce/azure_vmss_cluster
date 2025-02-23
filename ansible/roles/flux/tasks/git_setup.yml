@@ -69,11 +69,13 @@
       stat:
         path: /home/azureuser/.ssh/flux-deploy-key
       register: ssh_key_stat
+      delegate_to: localhost
 
     - name: Fail if SSH key does not exist
       fail:
         msg: "flux-deploy-key not found in /home/azureuser/.ssh/"
       when: not ssh_key_stat.stat.exists
+      delegate_to: localhost
 
     - name: Test GitHub connectivity
       command: ssh -T git@github.com -i /home/azureuser/.ssh/flux-deploy-key
@@ -84,11 +86,13 @@
       failed_when: 
         - github_test.rc != 1
         - "'successfully authenticated' not in github_test.stderr"
+      delegate_to: localhost
 
     - name: Stage all changes
       command: git add .
       args:
         chdir: /home/azureuser/azure_vmss_cluster
+      delegate_to: localhost
 
     - name: Get list of modified files
       command: git status --porcelain
@@ -96,12 +100,14 @@
         chdir: /home/azureuser/azure_vmss_cluster
       register: git_status
       changed_when: false
+      delegate_to: localhost
 
     - name: Generate commit message
       set_fact:
         commit_message: |
           Modified files:
           {{ git_status.stdout | regex_replace('^', '      ') }}
+      delegate_to: localhost
 
     - name: Commit changes with modified files list
       command: >
@@ -110,6 +116,7 @@
         chdir: /home/azureuser/azure_vmss_cluster
       when: git_status.stdout != ""
       ignore_errors: true
+      delegate_to: localhost
 
     - name: Pull remote changes and rebase
       command: git pull --rebase origin main
@@ -118,6 +125,7 @@
       environment:
         GIT_SSH_COMMAND: "ssh -i /home/azureuser/.ssh/flux-deploy-key -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
       ignore_errors: true
+      delegate_to: localhost
 
     - name: Push changes to remote repository
       command: git push origin main
@@ -126,5 +134,5 @@
       environment:
         GIT_SSH_COMMAND: "ssh -i /home/azureuser/.ssh/flux-deploy-key -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
       ignore_errors: true
-  delegate_to: localhost  # Add this to the block
+      delegate_to: localhost  # Add this to the block
   become_user: azureuser
