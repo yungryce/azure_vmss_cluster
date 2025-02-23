@@ -115,8 +115,10 @@
       command: git pull --rebase origin main
       args:
         chdir: /home/azureuser/azure_vmss_cluster
+      environment:
+        GIT_SSH_COMMAND: "ssh -i /home/azureuser/.ssh/flux-deploy-key -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
       ignore_errors: true
-      
+
     - name: Push changes to remote repository
       command: git push origin main
       args:
