@@ -126,4 +126,5 @@
       environment:
         GIT_SSH_COMMAND: "ssh -i /home/azureuser/.ssh/flux-deploy-key -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
       ignore_errors: true
-  delegate_to: localhost
+  delegate_to: localhost  # Add this to the block
+  become_user: azureuser
