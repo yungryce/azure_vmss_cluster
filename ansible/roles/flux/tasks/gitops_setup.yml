@@ -12,7 +12,7 @@
         mode: "{{ dir_mode }}"
       loop:
         - "infrastructure/base"
-        - "apps/base"
+        - "apps/base/nginx"
         - "clusters/development/flux-system"
 
     - name: Generate infrastructure kustomization
@@ -42,14 +42,13 @@
     - name: Generate nginx resources
       template:
         src: "{{ item.src }}"
-        dest: "{{ gitops_base_path }}/apps/base/{{ item.dest }}"
+        dest: "{{ gitops_base_path }}/apps/base/nginx/{{ item.dest }}"
         owner: "{{ git_owner }}"
         group: "{{ git_group }}"
         mode: "{{ file_mode }}"
       loop:
         - { src: "nginx-deployment.yaml.j2", dest: "nginx-deployment.yaml" }
         - { src: "nginx-svc.yml.j2", dest: "nginx-svc.yaml" }
-        - { src: "nginx-kustomization.yaml.j2", dest: "kustomization.yaml" }
 
     - name: Generate cluster kustomization
       template:
@@ -58,16 +57,4 @@
         owner: "{{ git_owner }}"
         group: "{{ git_group }}"
         mode: "{{ file_mode }}"
-
-    - name: Generate flux bootstrap manifests
-      template:
-        src: "{{ item.src }}"
-        dest: "{{ gitops_base_path }}/clusters/development/flux-system/{{ item.dest }}"
-        owner: "{{ git_owner }}"
-        group: "{{ git_group }}"
-        mode: "{{ file_mode }}"
-      loop:
-        - { src: "gotk-components.yaml.j2", dest: "gotk-components.yaml" }
-        - { src: "gotk-sync.yaml.j2", dest: "gotk-sync.yaml" }
-
 

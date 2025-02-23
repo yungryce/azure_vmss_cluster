@@ -59,29 +59,40 @@
     mode: '0600'
   when: hostvars[inventory_hostname].is_master
 
-- name: Test Git write access via Ansible
-  shell: |
-    export GIT_SSH_COMMAND="ssh -i /root/.ssh/flux-deploy-key -o StrictHostKeyChecking=no"
-    git clone ssh://git@github.com/yungryce/azure_vmss_cluster.git /tmp/flux-test
-    cd /tmp/flux-test
-    touch test-file
-    git -c user.email="yungryce@yahoo.com" -c user.name="yungryce" commit -am "Test write access"
-    git push origin main
-    rm -rf /tmp/flux-test
-  args:
-    executable: /bin/bash
-  environment:
-    GIT_SSH_COMMAND: "ssh -i /root/.ssh/flux-deploy-key -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
-  changed_when: false
-  ignore_errors: true
-  register: git_test
-  when: hostvars[inventory_hostname].is_master
+- name: Push GitOps changes to Git repository
+  block:
 
-- name: Debug Git write test
-  debug:
-    msg: "Git write access verified successfully"
-  when:
-    - hostvars[inventory_hostname].is_master
-    - git_test.rc == 0
-  tags:
-    - debug
+    - name: Stage all changes
+      command: git add .
+      args:
+        chdir: /home/azureuser/azure_vmss_cluster
+
+    - name: Get list of modified files
+      command: git status --porcelain
+      args:
+        chdir: /home/azureuser/azure_vmss_cluster
+      register: git_status
+      changed_when: false
+
+    - name: Generate commit message
+      set_fact:
+        commit_message: |
+          Initial GitOps setup: Added infrastructure, apps, and cluster configurations
+          Modified files:
+          {{ git_status.stdout | regex_replace('^', '      ') }}
+
+    - name: Commit changes with modified files list
+      command: >
+        git commit -m "{{ commit_message }}"
+      args:
+        chdir: /home/azureuser/azure_vmss_cluster
+      ignore_errors: true  # Allow this to fail if there are no changes
+
+    - name: Push changes to remote repository
+      command: git push origin main
+      args:
+        chdir: /home/azureuser/azure_vmss_cluster
+      ignore_errors: true  # Allow this to fail if there are no changes
+      environment:
+        GIT_SSH_COMMAND: "ssh -i /root/.ssh/flux-deploy-key -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
+  delegate_to: localhost

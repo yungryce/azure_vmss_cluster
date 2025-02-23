@@ -4,6 +4,6 @@ kind: Kustomization
 
 resources:
   - ../../../infrastructure/base  # Cluster-wide infra
-  - ../../../apps/base      # Apps to deploy in this cluster
+  - ../../../apps/base/nginx      # Apps to deploy in this cluster
   - gotk-components.yaml    # Flux bootstrap
   - gotk-sync.yaml          # Git sync config

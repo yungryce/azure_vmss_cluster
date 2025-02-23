@@ -1,7 +1,9 @@
+---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-metadata:
-  name: development
+
 resources:
-  - ../../infrastructure/base
-  - ../../apps/base
+  - ../../../infrastructure/base  # Cluster-wide infra
+  - ../../../apps/base/nginx      # Apps to deploy in this cluster
+  - gotk-components.yaml    # Flux bootstrap
+  - gotk-sync.yaml          # Git sync config

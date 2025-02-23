@@ -1,13 +1,13 @@
 ---
+- name: Setup GitOps directory structure
+  include_tasks: gitops_setup.yml
+
 - name: Include Git setup tasks
   include_tasks: git_setup.yml
 
 - name: Install flux binary
   include_tasks: install_flux.yml
   when: hostvars[inventory_hostname].is_master
-
-- name: Setup GitOps directory structure
-  include_tasks: gitops_setup.yml
 
 - name: Check connectivity to Kubernetes API server
   command: curl -k https://10.0.1.5:6443/healthz
