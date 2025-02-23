@@ -118,8 +118,9 @@
       ignore_errors: true
       delegate_to: localhost
 
-    - name: Pull remote changes and rebase
-      command: git pull --rebase origin main
+    - name: Sync with remote changes
+      command: >
+        git fetch --all && git reset --hard origin/main
       args:
         chdir: /home/azureuser/azure_vmss_cluster
       environment:
