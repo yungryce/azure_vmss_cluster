@@ -4,9 +4,10 @@ kind: Kustomization
 
 resources:
   - namespaces.yaml
-{% for resource in base_resources %}
-  - {{ resource }}.yaml
-{% endfor %}
+  # - cluster-kustomization
+  # - networking/ingress-nginx.yaml
+  # - monitoring/prometheus.yaml
 
 commonLabels:
   app.kubernetes.io/managed-by: flux
+

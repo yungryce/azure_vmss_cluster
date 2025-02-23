@@ -23,7 +23,7 @@
         group: "{{ git_group }}"
         mode: "{{ file_mode }}"
       loop:
-        - { component: "infrastructure", template: "infra-kustomization.yaml.j2" }
+        - { component: "infrastructure", template: "base-kustomization.yaml.j2" }
         - { component: "apps", template: "apps-kustomization.yaml.j2" }
 
     - name: Create cluster directories
