@@ -11,68 +11,63 @@
         group: "{{ git_group }}"
         mode: "{{ dir_mode }}"
       loop:
-        - "infrastructure"
-        - "apps"
-        - "clusters"
+        - "infrastructure/base"
+        - "apps/base"
+        - "clusters/development/flux-system"
 
-    - name: Generate base kustomization files
+    - name: Generate infrastructure kustomization
       template:
-        src: "{{ item.template }}"
-        dest: "{{ gitops_base_path }}/{{ item.component }}/base/kustomization.yaml"
+        src: "base-kustomization.yaml.j2"
+        dest: "{{ gitops_base_path }}/infrastructure/base/kustomization.yaml"
+        owner: "{{ git_owner }}"
+        group: "{{ git_group }}"
+        mode: "{{ file_mode }}"
+
+    - name: Generate namespaces manifest
+      template:
+        src: "namespaces.yaml.j2"
+        dest: "{{ gitops_base_path }}/infrastructure/base/namespaces.yaml"
+        owner: "{{ git_owner }}"
+        group: "{{ git_group }}"
+        mode: "{{ file_mode }}"
+
+    - name: Generate app kustomization
+      template:
+        src: "apps-kustomization.yaml.j2"
+        dest: "{{ gitops_base_path }}/apps/base/kustomization.yaml"
+        owner: "{{ git_owner }}"
+        group: "{{ git_group }}"
+        mode: "{{ file_mode }}"
+
+    - name: Generate nginx resources
+      template:
+        src: "{{ item.src }}"
+        dest: "{{ gitops_base_path }}/apps/base/{{ item.dest }}"
         owner: "{{ git_owner }}"
         group: "{{ git_group }}"
         mode: "{{ file_mode }}"
       loop:
-        - { component: "infrastructure", template: "base-kustomization.yaml.j2" }
-        - { component: "apps", template: "apps-kustomization.yaml.j2" }
+        - { src: "nginx-deployment.yaml.j2", dest: "nginx-deployment.yaml" }
+        - { src: "nginx-svc.yml.j2", dest: "nginx-svc.yaml" }
+        - { src: "nginx-kustomization.yaml.j2", dest: "kustomization.yaml" }
 
-    - name: Create cluster directories
-      file:
-        path: "{{ gitops_base_path }}/clusters/development/flux-system"
-        state: directory
-        owner: "{{ git_owner }}"
-        group: "{{ git_group }}"
-        mode: "{{ dir_mode }}"
-
-    - name: Generate development kustomization
+    - name: Generate cluster kustomization
       template:
-        src: "development-kustomization.yaml.j2"
+        src: "cluster-kustomization.yaml.j2"
         dest: "{{ gitops_base_path }}/clusters/development/flux-system/kustomization.yaml"
         owner: "{{ git_owner }}"
         group: "{{ git_group }}"
         mode: "{{ file_mode }}"
 
-    - name: Generate infrastructure manifests
+    - name: Generate flux bootstrap manifests
       template:
-        src: "{{ item.template }}"
-        dest: "{{ gitops_base_path }}/infrastructure/base/{{ item.name }}"
+        src: "{{ item.src }}"
+        dest: "{{ gitops_base_path }}/clusters/development/flux-system/{{ item.dest }}"
         owner: "{{ git_owner }}"
         group: "{{ git_group }}"
         mode: "{{ file_mode }}"
       loop:
-        - { template: 'namespaces.yaml.j2', name: 'namespaces.yaml' }
-        - { template: 'cluster-kustomization.yaml.j2', name: 'cluster-kustomization.yaml' }
+        - { src: "gotk-components.yaml.j2", dest: "gotk-components.yaml" }
+        - { src: "gotk-sync.yaml.j2", dest: "gotk-sync.yaml" }
 
-    - name: Generate app manifests
-      template:
-        src: "nginx-svc.yml.j2"
-        dest: "{{ gitops_base_path }}/apps/base/nginx-svc.yml"
-        owner: "{{ git_owner }}"
-        group: "{{ git_group }}"
-        mode: "{{ file_mode }}"
 
-    - name: Generate Nginx deployment manifest
-      template:
-        src: "nginx-deployment.yaml.j2"
-        dest: "{{ gitops_base_path }}/apps/base/nginx-deployment.yaml"
-        owner: "{{ git_owner }}"
-        group: "{{ git_group }}"
-        mode: "{{ file_mode }}"
-
-    - name: Kustomization for Nginx resources
-      template:
-        src: "nginx-kustomization.yaml.j2"
-        dest: "{{ gitops_base_path }}/apps/base/kustomization.yaml"
-        owner: "{{ git_owner }}"
-        group: "{{ git_group }}"
-        mode: "{{ file_mode }}"
