@@ -28,13 +28,19 @@
 
     - name: Create cluster directories
       file:
-        # path: "{{ gitops_base_path }}/clusters/{{ item.name }}/flux-system"
         path: "{{ gitops_base_path }}/clusters/development/flux-system"
         state: directory
         owner: "{{ git_owner }}"
         group: "{{ git_group }}"
         mode: "{{ dir_mode }}"
-      # loop: "{{ environments }}"
+
+    - name: Generate development kustomization
+      template:
+        src: "development-kustomization.yaml.j2"
+        dest: "{{ gitops_base_path }}/clusters/development/flux-system/kustomization.yaml"
+        owner: "{{ git_owner }}"
+        group: "{{ git_group }}"
+        mode: "{{ file_mode }}"
 
     - name: Generate infrastructure manifests
       template:

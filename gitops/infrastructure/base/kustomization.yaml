@@ -4,6 +4,7 @@ kind: Kustomization
 
 resources:
   - namespaces.yaml
-  - monitoring.yaml
-  - networking.yaml
-  - security.yaml
+    - monitoring.yaml
+    - networking.yaml
+    - security.yaml
+  
