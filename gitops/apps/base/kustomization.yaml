@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m0s
-  path: "./gitops/apps/nginx/base"
+  path: "./apps/base"
   prune: true
   sourceRef:
     kind: GitRepository

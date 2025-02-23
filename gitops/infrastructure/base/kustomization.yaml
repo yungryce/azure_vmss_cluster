@@ -4,7 +4,10 @@ kind: Kustomization
 
 resources:
   - namespaces.yaml
-    - monitoring.yaml
-    - networking.yaml
-    - security.yaml
-  
+  # - cluster-kustomization
+  # - networking/ingress-nginx.yaml
+  # - monitoring/prometheus.yaml
+
+commonLabels:
+  app.kubernetes.io/managed-by: flux
+

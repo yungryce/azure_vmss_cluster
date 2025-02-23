@@ -1,5 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+metadata:
+  name: development
 resources:
-- gotk-components.yaml
-- gotk-sync.yaml
+  - ../../infrastructure/base
+  - ../../apps/base
