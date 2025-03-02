@@ -2,6 +2,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+metadata:
+  name: cluster-data
+
 resources:
   - ../../../infrastructure/base  # Cluster-wide infra
   - ../../../apps/base/nginx      # Apps to deploy in this cluster
