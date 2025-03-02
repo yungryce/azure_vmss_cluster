@@ -60,17 +60,22 @@
       until: flux_check.rc == 0
       when: not flux_bootstrap.failed | default(false)
 
-- name: Push GitOps changes to Git repository
+- name: Gitops configuration management
+  delegate_to: localhost
   block:
-  - name: Pull remote Git repository changes from Flux bootstrapping
+  - name: Pull remote and add Git repository changes from Flux bootstrapping
     shell: |
       git pull origin main
       git add .
+    args:
+      chdir: /home/azureuser/azure_vmss_cluster
 
   - name: Get list of modified files
     command: git status --porcelain
     register: git_status
     changed_when: false
+    args:
+      chdir: /home/azureuser/azure_vmss_cluster
 
   - name: Generate commit message
     set_fact:
@@ -82,6 +87,6 @@
     shell: |
       git commit -m "{{ commit_message }}" || echo "No changes to commit"
       git push origin main
-  delegate_to: localhost
-  args:
-    chdir: /home/azureuser/azure_vmss_cluster
+    args:
+      chdir: /home/azureuser/azure_vmss_cluster
+ 
