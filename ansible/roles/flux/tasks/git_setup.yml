@@ -118,9 +118,8 @@
       ignore_errors: true
       delegate_to: localhost
 
-    - name: Sync with remote changes
-      command: >
-        git fetch --all && git reset --hard origin/main
+    - name: Sync with remote changes using rebase
+      command: git pull --rebase origin main
       args:
         chdir: /home/azureuser/azure_vmss_cluster
       environment:
@@ -135,5 +134,5 @@
       environment:
         GIT_SSH_COMMAND: "ssh -i /home/azureuser/.ssh/flux-deploy-key -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
       ignore_errors: true
-      delegate_to: localhost  # Add this to the block
+      delegate_to: localhost
   become_user: azureuser
