@@ -50,11 +50,4 @@
         - { src: "nginx-deployment.yaml.j2", dest: "nginx-deployment.yaml" }
         - { src: "nginx-svc.yml.j2", dest: "nginx-svc.yaml" }
 
-    - name: Generate cluster kustomization
-      template:
-        src: "cluster-kustomization.yaml.j2"
-        dest: "{{ gitops_base_path }}/clusters/development/flux-system/kustomization.yaml"
-        owner: "{{ git_owner }}"
-        group: "{{ git_group }}"
-        mode: "{{ file_mode }}"
 
