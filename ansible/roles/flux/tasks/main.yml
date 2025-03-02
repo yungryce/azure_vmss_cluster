@@ -63,6 +63,12 @@
 - name: Gitops configuration management
   delegate_to: localhost
   block:
+  - name: Remove git index lock file if it exists
+    file:
+      path: /home/azureuser/azure_vmss_cluster/.git/index.lock
+      state: absent
+    delegate_to: localhost
+
   - name: Pull remote and add Git repository changes from Flux bootstrapping
     shell: |
       git pull origin main
@@ -87,7 +93,8 @@
   - name: Push local GitOps configuration to remote
     shell: |
       git commit -m "{{ commit_message }}" || echo "No changes to commit"
-      git push origin main
+      GIT_SSH_COMMAND="ssh -i /root/.ssh/flux-deploy-key -o IdentitiesOnly=yes -o StrictHostKeyChecking=no" git push origin main
+      # git push origin main
     args:
       chdir: /home/azureuser/azure_vmss_cluster
  
