@@ -82,6 +82,7 @@
       commit_message: |
         Modified files:
         {{ git_status.stdout | regex_replace('^', '      ') }}
+    when: git_status.stdout != ""
 
   - name: Push local GitOps configuration to remote
     shell: |
