@@ -1,3 +1,16 @@
+/**
+ * AZURE VMSS INFRASTRUCTURE
+ * 
+ * Architecture Pattern: Hub-Spoke Network Topology
+ * Security Pattern: Least Privilege Access
+ * Scaling Pattern: Horizontal Auto-scaling
+ * 
+ * Technical Competencies:
+ * - Advanced VNet Peering
+ * - Managed Identity Configuration
+ * - Key Management Automation
+ */
+
 resource "random_pet" "rg_name" {
   prefix = var.resource_group_name_prefix
 }

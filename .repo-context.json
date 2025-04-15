@@ -1,0 +1,16 @@
+{
+  "project_identity": {
+    "type": "iac",
+    "scope": "repository",
+    "is_independent": true
+  },
+  "tech_stack": {
+    "primary": ["Terraform 1.0+", "Ansible 2.9+", "Kubernetes 1.24+"],
+    "secondary": ["Azure CLI", "Python 3.8+", "Flux CD 2.0"],
+    "key_libraries": ["Azure Provider ~>3.0", "Containerd 1.6+", "Flannel CNI"]
+  },
+  "skill_manifest": {
+    "technical": ["Infrastructure as Code", "Configuration Management", "GitOps", "Container Orchestration"],
+    "domain": ["Cloud Architecture", "DevOps", "Automation Engineering"]
+  }
+}

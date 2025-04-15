@@ -1,97 +1,115 @@
-# Azure VMSS Cluster with Terraform, Ansible, and Flux
+## Main Project README
 
-## Project Overview
+# Azure VMSS Kubernetes Cluster with GitOps
 
-This project implements a robust DevOps pipeline using Terraform, Ansible, and Flux (GitOps) on Azure. It deploys a Virtual Machine Scale Set (VMSS) on Azure, configures it with Ansible, and uses Kubernetes with Flux for GitOps-based cluster management and application deployment.
+A complete solution for deploying and managing a production-ready Kubernetes cluster on Azure Virtual Machine Scale Sets with GitOps-based continuous deployment.
 
-## Key Features
+## Technology Signature
 
-- Infrastructure as Code (IaC) with Terraform
-- Configuration management with Ansible
-- GitOps-based continuous deployment with Flux
-- Kubernetes cluster management
-- Multi-environment support (Development, Staging, Production)
-- Automated setup of GitOps directory structure
+### Infrastructure
+- **Terraform 1.0+**
+- **Azure Resources**: VMSS, Load Balancer, VNet, NSG, Key Vault
 
-## Prerequisites
+### Configuration Management
+- **Ansible 2.9+**
+- **Python 3.8+**
+- **Azure CLI 2.30+**
 
-- Terraform
-- Ansible
-- Kubernetes CLI (kubectl)
-- Flux CLI
-- Azure CLI or Azure PowerShell
-- Git
+### Runtime Platform
+- **Kubernetes 1.24+**
+- **Containerd 1.6+**
+- **Flannel CNI**
 
-## Getting Started
+### Continuous Deployment
+- **Flux CD 2.0**
+- **Git-based operations**
 
-1. Clone this repository:
-   ```
-   git clone https://github.com/yungryce/azure_vmss_cluster.git
-   cd azure_vmss_cluster
-   ```
+## System Architecture
 
-2. Set up your Azure credentials and configure your Azure CLI.
+This project implements a full DevOps lifecycle:
 
-3. Initialize Terraform:
-   ```
-   cd terraform
-   terraform init
-   ```
+1. **Infrastructure Provisioning** (Terraform)
+   - VMSS with Ubuntu 22.04
+   - Network security and load balancing
+   - Key management via Key Vault
 
-4. Apply the Terraform configuration:
-   ```
-   terraform apply
-   ```
-   You'll be prompted to provide values for:
-   - `prefix`: A prefix for your Azure resources
-   - `location`: The Azure region to deploy to
-   - `subscription_id`: Your Azure subscription ID
+2. **Configuration Management** (Ansible)
+   - Dynamic inventory from Terraform outputs
+   - Structured playbooks for component setup
+   - Role-based node configuration
 
-5. Once the VMSS is deployed, configure SSH access to the Ubuntu 22 VM.
+3. **Platform Setup**
+   - Kubernetes control plane and worker nodes
+   - Container runtime configuration
+   - Network policies and overlay
 
-6. Install Ansible on the VMSS nodes:
-   ```
-   ansible-playbook -i azure_vmss_inventory.py playbook.yml
-   ```
+4. **Continuous Deployment**
+   - GitOps workflow with Flux CD
+   - Repository-driven configuration
+   - Automated reconciliation
 
-7. The Ansible playbook will:
-   - Set up the Kubernetes cluster
-   - Install and configure Flux
-   - Bootstrap the GitOps structure
+## Deployment Workflow
 
-8. Verify the Flux installation:
-   ```
-   flux check
-   ```
+Terraform → Terraform Outputs → Ansible Inventory → Ansible Playbooks → Kubernetes Cluster → Flux CD → GitOps
+
+1. Run `terraform.sh` to provision infrastructure and generate outputs
+2. Execute `azure_vmss_inventory.py` to create dynamic Ansible inventory
+3. Apply Ansible playbooks to configure nodes and establish Kubernetes cluster
+4. Deploy Flux CD for GitOps-based continuous deployment
+5. Manage applications and configurations through Git repositories
+
+## Security Features
+
+- Managed identities for Azure resource access
+- SSH key automation with Key Vault storage
+- Network segmentation with NSG rules
+- VNet peering for secure communication
+- Role-based access control throughout the stack
+
+## Demonstrated Competencies
+
+- **Infrastructure as Code**: Automated cloud resource provisioning
+- **Configuration Management**: Systematic node setup and maintenance
+- **Container Orchestration**: Kubernetes cluster deployment and administration
+- **GitOps Practices**: Continuous deployment with declarative configurations
+- **Cloud Security**: Identity management, network isolation, and access control
+- **Automation Engineering**: End-to-end workflow integration
 
 ## Project Structure
 
-- `ansible/`: Ansible configuration files, playbooks, and roles
-- `gitops/`: GitOps directory structure for Flux
-  - `apps/`: Application manifests
-  - `infrastructure/`: Infrastructure manifests
-  - `clusters/`: Cluster-specific configurations
-- `terraform/`: Terraform configuration files
+- `/terraform`: Infrastructure as Code resources
+- `/ansible`: Configuration management playbooks
+  - `/common`: Base system setup
+  - `/containerd`: Container runtime configuration
+  - `/kubernetes`: Cluster deployment
+  - `/flux`: GitOps setup
+  - `/gitops`: Kubernetes manifests managed by Flux
+- `/private`: Private scripts and credentials (not committed)
 
-## GitOps Workflow
+## Getting Started
 
-This project uses Flux for GitOps-based continuous deployment. The GitOps directory structure is automatically set up, including:
+```bash
+# Clone repository
+git clone https://github.com/yourusername/azure_vmss_cluster.git
+cd azure_vmss_cluster
 
-- Base configurations for apps and infrastructure
-- Environment-specific overlays (Development, Staging, Production)
-- Flux system configurations
+# Deploy infrastructure
+cd terraform
+[terraform.sh](http://_vscodecontentref_/1)
 
-## Next Steps
+# Configure cluster
+cd ../ansible
+python [azure_vmss_inventory.py](http://_vscodecontentref_/2)
+ansible-playbook -i [azure_vmss_inventory.json](http://_vscodecontentref_/3) site.yml
+```
 
-- Customize the GitOps structure for your specific applications
-- Implement CI/CD pipelines for your application code
-- Enhance monitoring and logging capabilities
+## Contribution Guidelines
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+1. Fork the repository
+2. Create feature branch
+3. Submit pull request with detailed description
+4. Ensure CI/CD pipeline passes all tests
 
 ## License
 
 This project is licensed under the terms of the license found in the [LICENSE](LICENSE.txt) file.
-```

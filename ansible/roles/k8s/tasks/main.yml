@@ -1,3 +1,17 @@
+# KUBERNETES CLUSTER AUTOMATION
+#
+# Architecture Pattern: GitOps Deployment Model
+# Security Pattern: Defense-in-Depth Configuration
+# Operations Pattern: Infrastructure as Data
+#
+# Technical Competencies:
+# - Cluster Bootstrapping Automation
+# - Multi-Tiered Application Orchestration
+# - Declarative State Management
+# - Continuous Configuration Reconciliation
+# - Dynamic Inventory Management
+# - Secret Integration Workflows
+
 ---
 - name: Cleanup existing Kubernetes configuration
   import_tasks: cleanup_kubernetes.yml
