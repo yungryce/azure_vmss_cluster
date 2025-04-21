@@ -1,0 +1,42 @@
+{
+  "project_identity": {
+    "name": "Azure VMSS Infrastructure",
+    "type": "iac",
+    "scope": "subdir",
+    "is_independent": false
+  },
+  "tech_stack": {
+    "primary": ["Terraform 1.0+"],
+    "secondary": ["Azure Resources", "Azure CLI"],
+    "key_libraries": ["Azure Provider ~>3.0", "Azure API Provider ~>1.5", "Random Provider ~>3.0"]
+  },
+  "skill_manifest": {
+    "technical": [
+      "Infrastructure as Code",
+      "Cloud Resource Provisioning",
+      "Network Architecture Design",
+      "Security Posture Management",
+      "State Management",
+      "Resource Templating"
+    ],
+    "domain": [
+      "Cloud Architecture",
+      "Infrastructure Design",
+      "Resource Optimization"
+    ]
+  },
+  "relationships": {
+    "parent": "azure_vmss_cluster",
+    "outputs_to": ["ansible"],
+    "depends_on": []
+  },
+  "key_files": {
+    "main": ["main.tf", "variables.tf", "outputs.tf"],
+    "configuration": ["terraform.tfvars", "backend.tf"],
+    "modules": ["modules/network", "modules/compute", "modules/security"]
+  },
+  "outputs": {
+    "primary": "terraform_outputs.json",
+    "description": "Contains all the information needed by Ansible to configure the infrastructure"
+  }
+}

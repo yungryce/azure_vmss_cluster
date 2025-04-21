@@ -1,8 +1,10 @@
 {
   "project_identity": {
-    "type": "iac",
+    "name": "Azure VMSS Kubernetes Cluster",
+    "type": "Iac",
     "scope": "repository",
-    "is_independent": true
+    "is_independent": true,
+    "status": "production-ready"
   },
   "tech_stack": {
     "primary": ["Terraform 1.0+", "Ansible 2.9+", "Kubernetes 1.24+"],
@@ -10,7 +12,87 @@
     "key_libraries": ["Azure Provider ~>3.0", "Containerd 1.6+", "Flannel CNI"]
   },
   "skill_manifest": {
-    "technical": ["Infrastructure as Code", "Configuration Management", "GitOps", "Container Orchestration"],
-    "domain": ["Cloud Architecture", "DevOps", "Automation Engineering"]
-  }
+    "technical": [
+      "Infrastructure as Code", 
+      "Configuration Management", 
+      "GitOps", 
+      "Container Orchestration",
+      "Cloud Resource Provisioning",
+      "Network Architecture Design",
+      "Security Posture Management"
+    ],
+    "domain": [
+      "Cloud Architecture", 
+      "DevOps", 
+      "Automation Engineering",
+      "Kubernetes Administration",
+      "Continuous Deployment"
+    ]
+  },
+  "relationships": {
+    "contains": [
+      "terraform",
+      "ansible",
+      "gitops"
+    ]
+  },
+  "component_relationships": {
+    "terraform": {
+      "description": "Infrastructure provisioning layer",
+      "outputs_to": ["ansible"],
+      "dependencies": [],
+      "artifacts": ["terraform_outputs.json"],
+      "tech_stack": ["Terraform", "Azure Provider", "Azure Resources"]
+    },
+    "ansible": {
+      "description": "Configuration management layer",
+      "outputs_to": ["gitops"],
+      "dependencies": ["terraform"],
+      "artifacts": ["azure_vmss_inventory.json"],
+      "tech_stack": ["Ansible", "Python", "Kubernetes", "Containerd"]
+    },
+    "gitops": {
+      "description": "Continuous deployment layer",
+      "outputs_to": [],
+      "dependencies": ["ansible"],
+      "artifacts": ["kubernetes manifests"],
+      "tech_stack": ["Flux CD", "Kubernetes", "Git"]
+    }
+  },
+  "deployment_workflow": [
+    {
+      "step": 1,
+      "name": "Infrastructure Provisioning",
+      "component": "terraform",
+      "description": "Provision Azure resources using Terraform",
+      "artifacts": ["terraform_outputs.json"]
+    },
+    {
+      "step": 2,
+      "name": "Inventory Generation",
+      "component": "ansible",
+      "script": "azure_vmss_inventory.py",
+      "description": "Generate dynamic inventory from VMSS instances",
+      "artifacts": ["azure_vmss_inventory.json"]
+    },
+    {
+      "step": 3,
+      "name": "Cluster Configuration",
+      "component": "ansible",
+      "script": "playbook.yml",
+      "description": "Configure Kubernetes cluster on VMSS instances"
+    },
+    {
+      "step": 4,
+      "name": "GitOps Setup",
+      "component": "gitops",
+      "description": "Install Flux CD and configure GitOps workflow"
+    },
+    {
+      "step": 5,
+      "name": "Application Deployment",
+      "component": "gitops",
+      "description": "Deploy applications using the GitOps workflow"
+    }
+  ]
 }

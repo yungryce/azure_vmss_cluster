@@ -1,0 +1,57 @@
+{
+  "project_identity": {
+    "name": "Kubernetes GitOps Configuration",
+    "type": "declarative-configuration",
+    "scope": "subdir",
+    "is_independent": false
+  },
+  "tech_stack": {
+    "primary": ["Flux CD 2.0", "Kubernetes 1.24+"],
+    "secondary": ["Git", "Kustomize", "Helm"],
+    "key_libraries": []
+  },
+  "skill_manifest": {
+    "technical": [
+      "GitOps Workflow Implementation",
+      "Kubernetes Manifest Management",
+      "Progressive Delivery",
+      "Configuration Layering",
+      "Drift Detection and Reconciliation"
+    ],
+    "domain": [
+      "Continuous Deployment",
+      "Application Lifecycle Management",
+      "Environment Promotion"
+    ]
+  },
+  "relationships": {
+    "parent": "azure_vmss_cluster",
+    "outputs_to": [],
+    "depends_on": ["ansible"]
+  },
+  "key_directories": {
+    "main": ["infrastructure", "applications", "clusters"],
+    "infrastructure": [
+      "infrastructure/namespaces",
+      "infrastructure/rbac",
+      "infrastructure/networking"
+    ],
+    "applications": [
+      "applications/base",
+      "applications/overlays"
+    ],
+    "environments": [
+      "clusters/development",
+      "clusters/staging",
+      "clusters/production"
+    ]
+  },
+  "inputs": {
+    "primary": "Flux CD installed by Ansible",
+    "description": "Flux CD watches this Git repository and applies manifests to the cluster"
+  },
+  "outputs": {
+    "primary": "Deployed applications and configurations",
+    "description": "Applications and infrastructure components deployed and maintained on the Kubernetes cluster"
+  }
+}

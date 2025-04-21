@@ -1,0 +1,49 @@
+{
+  "project_identity": {
+    "name": "VMSS Kubernetes Configuration",
+    "type": "configuration-management",
+    "scope": "subdir",
+    "is_independent": false
+  },
+  "tech_stack": {
+    "primary": ["Ansible 2.9+", "Python 3.8+"],
+    "secondary": ["Kubernetes 1.24+", "Containerd 1.6+"],
+    "key_libraries": ["Azure SDK for Python", "Flux CD 2.0", "Flannel CNI"]
+  },
+  "skill_manifest": {
+    "technical": [
+      "Configuration Automation",
+      "Cluster Administration",
+      "Dynamic Inventory Management",
+      "Idempotent System Configuration",
+      "Error Detection and Recovery"
+    ],
+    "domain": [
+      "DevOps",
+      "Kubernetes Administration",
+      "System Configuration"
+    ]
+  },
+  "relationships": {
+    "parent": "azure_vmss_cluster",
+    "outputs_to": ["gitops"],
+    "depends_on": ["terraform"]
+  },
+  "key_files": {
+    "main": ["playbook.yml", "azure_vmss_inventory.py"],
+    "roles": [
+      "roles/common",
+      "roles/containerd",
+      "roles/kubernetes",
+      "roles/flux"
+    ]
+  },
+  "inputs": {
+    "primary": "../terraform/terraform_outputs.json",
+    "description": "Infrastructure details from Terraform used to build the inventory"
+  },
+  "outputs": {
+    "primary": "Kubernetes cluster with Flux CD",
+    "description": "A fully functional Kubernetes cluster with GitOps capabilities"
+  }
+}
