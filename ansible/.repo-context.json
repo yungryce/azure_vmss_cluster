@@ -1,49 +1,240 @@
 {
   "project_identity": {
-    "name": "VMSS Kubernetes Configuration",
-    "type": "configuration-management",
-    "scope": "subdir",
-    "is_independent": false
+    "name": "Ansible Configuration Management for Kubernetes VMSS Cluster",
+    "type": "container",
+    "scope": "configuration-management",
+    "description": "Advanced Ansible automation container for deploying production-ready Kubernetes clusters on Azure VMSS with dynamic inventory generation, role-based configuration management, and GitOps integration.",
+    "is_independent": false,
+    "version": "2.0.0",
+    "curriculum_stage": "advanced"
   },
   "tech_stack": {
-    "primary": ["Ansible 2.9+", "Python 3.8+"],
-    "secondary": ["Kubernetes 1.24+", "Containerd 1.6+"],
-    "key_libraries": ["Azure SDK for Python", "Flux CD 2.0", "Flannel CNI"]
+    "primary": ["Ansible 2.9+", "Python 3.8+", "Azure CLI", "Kubernetes 1.24+"],
+    "secondary": ["Containerd 1.6+", "Flannel CNI", "Flux CD 2.0", "Azure SDK for Python"],
+    "key_libraries": ["ansible-collections-azure", "azure-identity", "azure-keyvault-secrets", "kubernetes-python-client"],
+    "development_tools": ["ansible-lint", "yamllint", "jq", "kubectl", "Azure CLI"],
+    "testing_frameworks": ["ansible-test", "molecule", "testinfra"]
   },
   "skill_manifest": {
     "technical": [
-      "Configuration Automation",
-      "Cluster Administration",
+      "Advanced Ansible Architecture",
       "Dynamic Inventory Management",
-      "Idempotent System Configuration",
-      "Error Detection and Recovery"
+      "Multi-Node Configuration Orchestration",
+      "Container Runtime Configuration",
+      "Kubernetes Cluster Automation",
+      "GitOps Pipeline Integration",
+      "Azure API Integration",
+      "SSH Key Management Automation",
+      "Role-Based Configuration Design",
+      "Idempotent Operations",
+      "Error Handling & Recovery"
     ],
     "domain": [
-      "DevOps",
+      "Configuration Management",
       "Kubernetes Administration",
-      "System Configuration"
+      "DevOps Automation",
+      "Cloud Infrastructure",
+      "Container Orchestration",
+      "Network Configuration",
+      "Security Automation",
+      "CI/CD Pipeline Integration"
+    ],
+    "competency_level": "advanced",
+    "prerequisites": [
+      "Strong Ansible fundamentals and playbook development",
+      "Understanding of Kubernetes architecture and components",
+      "Experience with Azure cloud services and APIs",
+      "Knowledge of container runtime technologies",
+      "Familiarity with GitOps concepts and workflows"
+    ]
+  },
+  "components": {
+    "main_files": [
+      {
+        "path": "playbook.yml",
+        "purpose": "Master playbook orchestrating all configuration roles with proper dependency management",
+        "complexity": "advanced",
+        "key_features": ["Role orchestration", "Conditional execution", "Error handling"]
+      },
+      {
+        "path": "azure_vmss_inventory.py",
+        "purpose": "Dynamic inventory generation script with Azure API integration and SSH key automation",
+        "complexity": "advanced",
+        "key_features": ["Azure API integration", "SSH key management", "JSON processing"]
+      },
+      {
+        "path": "requirements.yml",
+        "purpose": "Ansible collections and dependencies specification",
+        "complexity": "basic"
+      }
+    ],
+    "role_structure": [
+      {
+        "path": "roles/common/",
+        "purpose": "Base system configuration and security hardening for all nodes",
+        "complexity": "intermediate",
+        "responsibilities": ["Package management", "Security configuration", "SSH setup"]
+      },
+      {
+        "path": "roles/containerd/",
+        "purpose": "Container runtime installation and optimization",
+        "complexity": "intermediate", 
+        "responsibilities": ["Runtime installation", "Configuration tuning", "Service management"]
+      },
+      {
+        "path": "roles/k8s/",
+        "purpose": "Kubernetes cluster deployment and node configuration",
+        "complexity": "advanced",
+        "responsibilities": ["Control plane setup", "Worker node joining", "Network configuration"]
+      },
+      {
+        "path": "roles/flux/",
+        "purpose": "GitOps controller deployment and repository configuration",
+        "complexity": "advanced",
+        "responsibilities": ["Flux CD installation", "Repository integration", "Continuous deployment setup"]
+      }
+    ]
+  },
+  "topics": [
+    "Ansible Automation",
+    "Dynamic Inventory",
+    "Kubernetes Deployment",
+    "Container Runtime Configuration",
+    "GitOps Integration",
+    "Azure API Integration",
+    "SSH Key Automation",
+    "Multi-Node Orchestration",
+    "Configuration Management",
+    "Infrastructure as Code",
+    "DevOps Automation",
+    "Network Configuration"
+  ],
+  "projectStructure": {
+    "entryPoint": "playbook.yml",
+    "configFiles": ["requirements.yml", "azure_vmss_inventory.py"],
+    "documentationFiles": ["README.md", "ARCHITECTURE.md", "PROJECT-MANIFEST.md"],
+    "roleDirectories": ["roles/common", "roles/containerd", "roles/k8s", "roles/flux"],
+    "generatedFiles": ["azure_vmss_inventory.json"]
+  },
+  "outcomes": {
+    "primary": [
+      "Deploy production-ready Kubernetes cluster on Azure VMSS instances",
+      "Implement dynamic inventory management with Azure API integration",
+      "Configure advanced Ansible role-based architecture with dependencies",
+      "Establish GitOps continuous deployment pipeline with Flux CD",
+      "Demonstrate multi-node cluster orchestration and configuration management"
+    ],
+    "skills_acquired": [
+      "Advanced Ansible playbook development and role architecture",
+      "Dynamic inventory generation with cloud API integration",
+      "Kubernetes cluster deployment automation and configuration",
+      "Container runtime setup and optimization techniques",
+      "GitOps workflow implementation and repository management",
+      "Azure cloud service integration and authentication patterns"
+    ],
+    "deliverables": [
+      "Functional Kubernetes cluster with proper networking",
+      "GitOps-enabled continuous deployment system",
+      "Automated configuration management pipeline",
+      "Dynamic inventory system adapting to infrastructure changes",
+      "Comprehensive role-based configuration architecture",
+      "Production-ready cluster security and hardening"
+    ]
+  },
+  "prerequisites": {
+    "knowledge": [
+      "Advanced Ansible concepts including roles, handlers, and variables",
+      "Kubernetes architecture and cluster components understanding",
+      "Azure cloud services and API familiarity",
+      "Container technologies and runtime concepts",
+      "Network configuration and security principles"
+    ],
+    "technical": [
+      "Ansible 2.9+ installed with Azure collections",
+      "Python 3.8+ with Azure SDK packages",
+      "Azure CLI configured with proper authentication",
+      "SSH access to target VMSS instances",
+      "Terraform outputs available from infrastructure layer"
     ]
   },
   "relationships": {
-    "parent": "azure_vmss_cluster",
-    "outputs_to": ["gitops"],
-    "depends_on": ["terraform"]
-  },
-  "key_files": {
-    "main": ["playbook.yml", "azure_vmss_inventory.py"],
-    "roles": [
-      "roles/common",
-      "roles/containerd",
-      "roles/kubernetes",
-      "roles/flux"
+    "parent_project": "azure_vmss_cluster",
+    "depends_on": [
+      {
+        "component": "terraform",
+        "dependency_type": "infrastructure_outputs",
+        "description": "Consumes Terraform outputs for VMSS instance discovery and configuration"
+      }
+    ],
+    "enables": [
+      {
+        "component": "gitops",
+        "relationship_type": "platform_preparation",
+        "description": "Prepares Kubernetes platform for GitOps deployment workflows"
+      }
+    ],
+    "integration_points": [
+      {
+        "source": "terraform_outputs.json",
+        "target": "azure_vmss_inventory.py",
+        "purpose": "Infrastructure metadata consumption for dynamic inventory"
+      },
+      {
+        "source": "Azure Key Vault",
+        "target": "SSH authentication",
+        "purpose": "Secure key retrieval for instance access"
+      }
     ]
   },
-  "inputs": {
-    "primary": "../terraform/terraform_outputs.json",
-    "description": "Infrastructure details from Terraform used to build the inventory"
+  "files": {
+    "total_count": 8,
+    "by_type": {
+      "playbooks": 1,
+      "scripts": 1,
+      "roles": 4,
+      "configuration": 1,
+      "documentation": 3
+    },
+    "key_files": [
+      "playbook.yml",
+      "azure_vmss_inventory.py",
+      "requirements.yml",
+      "roles/k8s/",
+      "roles/flux/"
+    ]
   },
-  "outputs": {
-    "primary": "Kubernetes cluster with Flux CD",
-    "description": "A fully functional Kubernetes cluster with GitOps capabilities"
+  "assessment": {
+    "difficulty": "advanced",
+    "estimated_hours": 20,
+    "complexity_factors": [
+      "Dynamic inventory generation with Azure API integration",
+      "Multi-node Kubernetes cluster orchestration",
+      "Role-based configuration management architecture",
+      "Container runtime configuration and optimization",
+      "GitOps pipeline deployment and integration",
+      "Error handling and recovery mechanisms"
+    ],
+    "evaluation_criteria": [
+      "Successful dynamic inventory generation from VMSS instances",
+      "Functional Kubernetes cluster with proper node communication",
+      "Working GitOps pipeline with repository synchronization",
+      "Proper role execution order and dependency management",
+      "Idempotent configuration management operations",
+      "Security hardening and SSH key automation"
+    ]
+  },
+  "metadata": {
+    "created_date": "2024",
+    "last_updated": "2025-06-24",
+    "maintainer": "Chigbu Joshua",
+    "license": "MIT",
+    "container_type": "configuration-management",
+    "tags": ["ansible", "kubernetes", "azure-vmss", "configuration-management", "gitops", "automation"],
+    "quality_indicators": {
+      "code_coverage": "comprehensive",
+      "documentation_quality": "excellent",
+      "test_coverage": "good",
+      "production_readiness": "high"
+    }
   }
 }
