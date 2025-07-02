@@ -3,6 +3,7 @@
     "name": "Azure VMSS Kubernetes Cluster with GitOps",
     "type": "project",
     "scope": "devops",
+    "screenshotUrl": "https://i.imgur.com/Pu28iPG.png",
     "description": "Production-ready infrastructure-as-code solution for deploying and managing Kubernetes clusters on Azure Virtual Machine Scale Sets with comprehensive GitOps workflow integration. Demonstrates enterprise-grade DevOps practices, multi-layer automation, and cloud-native deployment patterns.",
     "is_independent": true,
     "version": "2.0.0",
